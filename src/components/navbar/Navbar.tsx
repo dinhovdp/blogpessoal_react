@@ -1,33 +1,36 @@
-import {
-    GithubLogoIcon,
-    InstagramLogoIcon,
-    LinkedinLogoIcon,
-} from "@phosphor-icons/react";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 
-function Footer() {
-    let data = new Date().getFullYear();
+function Navbar() {
+    const navigate = useNavigate();
+
+    const { handleLogout } = useContext(AuthContext);
+    function logout() {
+        handleLogout();
+        alert("Usuário desconectado com sucesso!");
+        navigate("/");
+    }
 
     return (
-        <div className="flex justify-center bg-indigo-900 text-white">
-            <div className="container flex flex-col items-center py-4">
-                <p className="text-xl font-bold">
-                    Blog Pessoal Edson Silva | Copyright: {data}
-                </p>
-                <p className="text-lg">Acesse minhas redes sociais</p>
-                <div className="flex gap-2">
-                    <a href="#" target="_blank">
-                        <LinkedinLogoIcon size={48} weight="bold" />
-                    </a>
-                    <a href="#" target="_blank">
-                        <InstagramLogoIcon size={48} weight="bold" />
-                    </a>
-                    <a href="#" target="_blank">
-                        <GithubLogoIcon size={48} weight="bold" />
-                    </a>
+        <>
+            <div className='w-full flex justify-center py-4
+                            bg-indigo-900 text-white'>
+
+                <div className="container flex justify-between text-lg mx-8">
+                    <Link to="/" className="text-2xl font-bold">Blog Pessoal </Link>
+
+                    <div className='flex gap-4'>
+                        <Link to='/postagens' className='hover:underline'>Postagens</Link>
+                        <Link to='/temas' className='hover:underline'>Temas</Link>
+                        <Link to='/cadastrartema' className='hover:underline'>Cadastrar tema</Link>
+                        Perfil
+                        <Link onClick={logout} to="" className="hover:underline">Sair </Link>
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        </>
+    )
 }
 
-export default Footer;
+export default Navbar
