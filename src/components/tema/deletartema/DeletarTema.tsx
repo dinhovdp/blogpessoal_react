@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { buscar, deletar } from "../../../services/Service";
 import { ClipLoader } from "react-spinners";
-import type Tema from "../../../models/tema";
+import type Tema from "../../../models/Tema";
  
 function DeletarTema() {
  

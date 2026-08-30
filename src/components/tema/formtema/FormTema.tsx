@@ -4,7 +4,7 @@ import { AuthContext } from "../../../contexts/AuthContext";
 import { atualizar, buscar, cadastrar } from "../../../services/Service";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
-import type Tema from "../../../models/tema";
+import type Tema from "../../../models/Tema";
  
 function FormTema() {
  
