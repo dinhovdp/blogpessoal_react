@@ -6,6 +6,7 @@ import { SyncLoader } from "react-spinners";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import type Tema from "../../../models/Tema";
+import { ToastAlerta } from "../../../utils/ToastAlerta";
  
 function ListaTemas() {
     // Objeto responsavel por redirecionar o usuario para outra rota
@@ -27,7 +28,7 @@ function ListaTemas() {
     // UseEffect responsável para monitorar o token
     useEffect(() => {
         if (token === '') {
-            alert('Você precisa estar logado!');
+            ToastAlerta('Você precisa estar logado!', 'info');
             navigate('/');
         }
     }, [token]);
@@ -47,7 +48,7 @@ function ListaTemas() {
             })
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 401) {
-                alert(`Erro ao consultar os temas: ${error.response.status}`);
+                ToastAlerta(`Erro ao consultar os temas: ${error.response.status}`, 'erro');
                     handleLogout();
             } 
         } finally {

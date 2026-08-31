@@ -14,6 +14,9 @@ import FormPostagem from "./components/postagem/formpostagem/FormPostagem";
 import DeletarPostagem from "./components/postagem/deletarpostagem/DeletarPostagem";
 import AtualizarPerfil from "./pages/perfil/AtualizarPerfil";
 
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from "react-toastify";
+ 
 
 
 
@@ -23,7 +26,7 @@ function App() {
   return (
     <>
       <AuthProvider>
-
+        <ToastContainer/>
 
         <BrowserRouter>
           <Navbar />

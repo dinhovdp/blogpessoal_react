@@ -5,6 +5,7 @@ import { AuthContext } from "../../contexts/AuthContext"
 import type Usuario from "../../models/Usuario"
 import { atualizar, buscar } from "../../services/Service"
 import axios from "axios";
+import { ToastAlerta } from "../../utils/ToastAlerta";
 
 
 function AtualizarPerfil() {
@@ -34,7 +35,7 @@ function AtualizarPerfil() {
             if (error.toString().includes("401")) {
                 handleLogout()
             } else {
-                alert("Usuário não encontrado!")
+                ToastAlerta("Usuário não encontrado!", "erro")
                 retornar()
             }
         }
@@ -42,7 +43,7 @@ function AtualizarPerfil() {
 
     useEffect(() => {
         if (token === "") {
-            alert("Você precisa estar logado!")
+            ToastAlerta("Você precisa estar logado!", "info")
             navigate("/")
         }
     }, [token])
@@ -81,7 +82,7 @@ function AtualizarPerfil() {
     async function atualizarUsuario(e: SyntheticEvent<HTMLFormElement>) {
         e.preventDefault()
         if (confirmarSenha !== user.senha || user.senha.length < 8) {
-            alert("Senhas não conferem e/ou não possuem pelo menos 8 caracteres");
+            ToastAlerta("Senhas não conferem e/ou não possuem pelo menos 8 caracteres", "erro");
             setUser({ ...user, senha: '' });
             setConfirmarSenha('');
             return;
@@ -95,11 +96,11 @@ function AtualizarPerfil() {
                     Authorization: token,
                 },
             })
-            alert("Usuário atualizado com sucesso! \n Efetue o Login Novamente!")
+            ToastAlerta("Usuário atualizado com sucesso! \n Efetue o Login Novamente!", "sucesso")
             sucesso()
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                alert(`Erro ao cadastrar o usuário (${error.response?.status})`)
+                ToastAlerta(`Erro ao cadastrar o usuário (${error.response?.status})`, "erro")
                 return;
             }
         } finally {

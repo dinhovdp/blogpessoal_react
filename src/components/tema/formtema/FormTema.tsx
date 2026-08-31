@@ -5,6 +5,7 @@ import { atualizar, buscar, cadastrar } from "../../../services/Service";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import type Tema from "../../../models/Tema";
+import { ToastAlerta } from "../../../utils/ToastAlerta";
  
 function FormTema() {
  
@@ -38,7 +39,7 @@ function FormTema() {
  
     }catch (error){
       if (axios.isAxiosError(error) && error.response?.status === 401){
-        alert(`Erro ao consultar o tema: ${error.response.status}`);
+        ToastAlerta(`Erro ao consultar o tema: ${error.response.status}`, "erro");
         handleLogout();
       }
     }finally {
@@ -57,7 +58,7 @@ function FormTema() {
   // useEffect para monitorar o token
   useEffect( () => {
     if (token === ''){
-      alert("Você precisa estar logado!");
+      ToastAlerta("Você precisa estar logado!", "info");
       navigate('/');
     }
   }, [token])
@@ -85,10 +86,10 @@ function FormTema() {
         await atualizar(`/temas`, tema, setTema, {
           headers: { Authorization: token }
         });
-        alert("Tema atualizado com sucesso!");
+        ToastAlerta("Tema atualizado com sucesso!", "sucesso");
       }catch(error){
         if (axios.isAxiosError(error)){
-          alert(`Erro ao atualizar o tema: ${error.response?.status}`);
+          ToastAlerta(`Erro ao atualizar o tema: ${error.response?.status}`, "erro");
           if(error.response?.status === 401){
             handleLogout();
           }
@@ -104,10 +105,10 @@ function FormTema() {
         await cadastrar(`/temas`, tema, setTema, {
           headers: { Authorization: token }
         });
-        alert("Tema cadastrado com sucesso!");
+        ToastAlerta("Tema cadastrado com sucesso!", "sucesso");
       }catch(error){
         if (axios.isAxiosError(error)){
-          alert(`Erro ao cadastrar o tema: ${error.response?.status}`);
+          ToastAlerta(`Erro ao cadastrar o tema: ${error.response?.status}`, "erro");
           if(error.response?.status === 401){
             handleLogout();
           }
