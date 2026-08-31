@@ -7,15 +7,17 @@ import { ToastAlerta } from '../../utils/ToastAlerta'
 function Perfil() {
     const navigate = useNavigate()
 
-    const { usuario } = useContext(AuthContext)
+    const { usuario, isLogout } = useContext(AuthContext)
     const token = usuario.token
 
     useEffect(() => {
         if (token === '') {
-            ToastAlerta('Você precisa estar logado!', 'info')
+            if (!isLogout) {
+                ToastAlerta('Você precisa estar logado!', 'info')
+            }
             navigate('/')
         }
-    }, [token])
+    }, [token, isLogout])
 
     return (
         <div className="flex justify-center mx-4">

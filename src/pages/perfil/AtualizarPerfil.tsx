@@ -16,7 +16,7 @@ function AtualizarPerfil() {
     const [user, setUser] = useState<Usuario>({} as Usuario)
     const [confirmarSenha, setConfirmarSenha] = useState<string>("")
 
-    const { usuario, handleLogout } = useContext(AuthContext)
+    const { usuario, handleLogout, isLogout } = useContext(AuthContext)
     const token = usuario.token
 
     const id: string = usuario.id.toString()
@@ -43,10 +43,12 @@ function AtualizarPerfil() {
 
     useEffect(() => {
         if (token === "") {
-            ToastAlerta("Você precisa estar logado!", "info")
+            if (!isLogout) {
+                ToastAlerta("Você precisa estar logado!", "info")
+            }
             navigate("/")
         }
-    }, [token])
+    }, [token, isLogout])
 
     useEffect(() => {
         setUser({} as Usuario)
@@ -66,6 +68,7 @@ function AtualizarPerfil() {
 
     function sucesso() {
         handleLogout()
+        navigate("/")
     }
 
     function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {

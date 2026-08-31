@@ -21,7 +21,7 @@ function FormPostagem() {
 
 	const [postagem, setPostagem] = useState<Postagem>({} as Postagem)
 
-	const { usuario, handleLogout } = useContext(AuthContext)
+	const { usuario, handleLogout, isLogout } = useContext(AuthContext)
 	const token = usuario.token
 
 	const { id } = useParams<{ id: string }>()
@@ -74,10 +74,12 @@ function FormPostagem() {
 
 	useEffect(() => {
 		if (token === "") {
-			ToastAlerta("Você precisa estar logado", 'info')
+			if (!isLogout) {
+				ToastAlerta("Você precisa estar logado", 'info')
+			}
 			navigate("/")
 		}
-	}, [token])
+	}, [token, isLogout])
 
 	// Atualização da Postagem
 	// Busca a Postagem pelo ID e Recarrega os Temas no Select

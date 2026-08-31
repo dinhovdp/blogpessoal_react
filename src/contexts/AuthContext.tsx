@@ -1,8 +1,25 @@
 import axios from "axios";
-import { createContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type UsuarioLogin from "../models/UsuarioLogin";
 import { login } from "../services/Service";
 import { ToastAlerta } from "../utils/ToastAlerta";
+
+const STORAGE_KEY = 'blogPessoalUsuario';
+
+const usuarioInicial: UsuarioLogin = {
+    id: 0,
+    nome: '',
+    usuario: '',
+    senha: '',
+    foto: '',
+    token: '',
+};
+
+const sanitizeUsuario = (usuario: Partial<UsuarioLogin>): UsuarioLogin => ({
+    ...usuarioInicial,
+    ...usuario,
+    senha: '',
+});
 
 //  Definir os Estados e Funções disponibilizadas pela Context
 interface AuthContextProps {
@@ -28,19 +45,34 @@ export const AuthContext = createContext({} as AuthContextProps)
 
 export function AuthProvider({ children }: AuthProviderProps) {
 
-    // inicializar o estado usuario, que é do tipo UsuarioLogin
-    const [usuario, setUsuario] = useState<UsuarioLogin>({
-        id: 0,
-        nome: '',
-        usuario: '',
-        senha: '',
-        foto: '',
-        token: '',
-    })
+    const [usuario, setUsuario] = useState<UsuarioLogin>(() => {
+        const usuarioSalvo = localStorage.getItem(STORAGE_KEY);
+
+        if (!usuarioSalvo) {
+            return usuarioInicial;
+        }
+
+        try {
+            const usuarioPersistido = JSON.parse(usuarioSalvo) as Partial<UsuarioLogin>;
+            return sanitizeUsuario(usuarioPersistido);
+        } catch {
+            return usuarioInicial;
+        }
+    });
     // Inicializar o estado isLoading
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const isLogout = useRef(false)
+
+    useEffect(() => {
+        if (usuario.token !== '') {
+            const usuarioSeguro = sanitizeUsuario(usuario);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(usuarioSeguro));
+            return;
+        }
+
+        localStorage.removeItem(STORAGE_KEY);
+    }, [usuario])
 
     // Implementar a função handleLogin
     async function handleLogin(usuarioLogin: UsuarioLogin) {
@@ -48,7 +80,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setIsLoading(true);
 
         try {
-            await login(`/usuarios/logar`, usuarioLogin, setUsuario)
+            await login(`/usuarios/logar`, usuarioLogin, (dados: UsuarioLogin) => {
+                setUsuario(sanitizeUsuario(dados))
+            })
             ToastAlerta("Usuário Autenticado com sucesso!", "sucesso")
 
             isLogout.current = false
@@ -68,14 +102,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         isLogout.current = true
 
-        setUsuario({
-            id: 0,
-            nome: '',
-            usuario: '',
-            senha: '',
-            foto: '',
-            token: '',
-        })
+        setUsuario(usuarioInicial)
+        localStorage.removeItem(STORAGE_KEY)
 
         ToastAlerta('Usuario desconectado com sucesso!', 'sucesso');
 

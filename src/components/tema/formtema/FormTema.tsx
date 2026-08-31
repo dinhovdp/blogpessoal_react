@@ -20,7 +20,7 @@ function FormTema() {
  
   // Consumo da Context para obter os dados do tema autenticado (estado usuario)
   // e a função handleLogout para efetuar logout caso o token seja inválido
-  const { usuario, handleLogout } = useContext(AuthContext);
+  const { usuario, handleLogout, isLogout } = useContext(AuthContext);
   const token = usuario.token;
  
   // Acessar o parâmetro da rota (id do tema)
@@ -58,10 +58,12 @@ function FormTema() {
   // useEffect para monitorar o token
   useEffect( () => {
     if (token === ''){
-      ToastAlerta("Você precisa estar logado!", "info");
+      if (!isLogout) {
+        ToastAlerta("Você precisa estar logado!", "info");
+      }
       navigate('/');
     }
-  }, [token])
+  }, [token, isLogout])
  
   // Função responsável por atualizar  o estado tema
   function atualizarEstado(e: ChangeEvent<HTMLInputElement>){

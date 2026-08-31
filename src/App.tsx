@@ -11,6 +11,8 @@ import { AuthProvider } from "./contexts/AuthContext"
 import Cadastro from "./pages/cadastro/Cadastro"
 import Home from "./pages/home/Home"
 import Login from "./pages/login/Login"
+import Perfil from "./pages/perfil/Perfil"
+import AtualizarPerfil from "./pages/perfil/AtualizarPerfil"
 
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
 						<Route path="/" element={<Login />} />
 						<Route path="/home" element={<Home />} />
 						<Route path="/cadastro" element={<Cadastro />} />
+						<Route path="/perfil" element={<Perfil />} />
+						<Route path="/atualizarusuario" element={<AtualizarPerfil />} />
 						<Route path="/temas" element={<ListaTemas />} />
 						<Route path="/cadastrartema" element={<FormTema />} />
 						<Route path="/editartema/:id" element={<FormTema />} />

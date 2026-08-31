@@ -21,17 +21,19 @@ function ListaTemas() {
  
     // Consumo da Context para Obter os dados do usuario autenticado (estado usuario)
     //e a função handlelogout para efetuar logout caso o token seja invalido
-    const { usuario, handleLogout } = useContext(AuthContext);
- 
+const { usuario, handleLogout, isLogout } = useContext(AuthContext);
+
     const token = usuario.token;
- 
+
     // UseEffect responsável para monitorar o token
     useEffect(() => {
         if (token === '') {
-            ToastAlerta('Você precisa estar logado!', 'info');
+            if (!isLogout) {
+                ToastAlerta('Você precisa estar logado!', 'info');
+            }
             navigate('/');
         }
-    }, [token]);
+    }, [token, isLogout]);
  
     //  useEffect responsável por executar a função buscarTemas
     useEffect(() => {
