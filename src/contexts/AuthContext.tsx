@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useRef, useState, type ReactNode } from "react";
 import type UsuarioLogin from "../models/UsuarioLogin";
 import { login } from "../services/Service";
 import { ToastAlerta } from "../utils/ToastAlerta";
@@ -10,6 +10,7 @@ interface AuthContextProps {
     handleLogin(usuario: UsuarioLogin): void
     handleLogout(): void
     isLoading: boolean
+    isLogout: boolean
 
 }
 
@@ -39,27 +40,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Inicializar o estado isLoading
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const isLogout = useRef(false)
+
     // Implementar a função handleLogin
     async function handleLogin(usuarioLogin: UsuarioLogin) {
 
         setIsLoading(true);
 
         try {
-            await login(`/usuarios/logar`, usuarioLogin, setUsuario);
-            ToastAlerta("Usuário Autenticado com sucesso!", "sucesso");
+            await login(`/usuarios/logar`, usuarioLogin, setUsuario)
+            ToastAlerta("Usuário Autenticado com sucesso!", "sucesso")
+
+            isLogout.current = false
+
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                ToastAlerta(`Erro ao autenticar o usuário: ${error.response.status}`, "erro");
-                console.log('Resposta da API: ', error.message);
-            } else {
-                ToastAlerta("Erro ao autenticar o usuário! Verifique a conexão com a API!", "erro");
+            if (axios.isAxiosError(error)) {
+                ToastAlerta(`Erro ao autenticar o usuário (${error.response?.status})`, "erro")
+                return
             }
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
+
     }
     // Implementar a função handleLogout (desconectar o Usuario)
     function handleLogout() {
+
+        isLogout.current = true
+
         setUsuario({
             id: 0,
             nome: '',
@@ -69,9 +77,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
             token: '',
         })
 
+        ToastAlerta('Usuario desconectado com sucesso!', 'sucesso');
+
     }
     return (
-        <AuthContext.Provider value={{ usuario, handleLogin, handleLogout, isLoading }}>
+        <AuthContext.Provider value={{ usuario, handleLogin, handleLogout, isLoading, isLogout: isLogout.current }}>
             {children}
         </AuthContext.Provider>
     )
